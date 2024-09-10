@@ -1,53 +1,53 @@
 from collections import deque
 
-# 입력 처리
 N, Q = map(int, input().split())
 
-# 스택 초기화
-back = deque()   # 뒤로가기 스택
-front = deque()  # 앞으로가기 스택
-current_page = -1  # 현재 페이지 (-1은 초기 상태, 아무 페이지도 열지 않은 상태)
+front = deque()
+back = deque()
+current_page = 0
+access_cnt = False
 
 for _ in range(Q):
-    command = input().split()
+    order = input().split()
     
-    if command[0] == 'A':  # 접속 명령
-        new_page = int(command[1])
-        if current_page != -1:  # 이미 페이지가 있을 경우
-            back.append(current_page)  # 현재 페이지를 back에 저장
-        current_page = new_page  # 새 페이지 접속
-        front.clear()  # 새로운 페이지를 접속하면 앞으로 가기 목록은 초기화
+    if "A" in order: # 접속의 경우
+        if not access_cnt: # 처음 웹페이지 접속하는 경우
+            current_page = int(order[1]) # 현재 페이지를 뒤로 가기 공간에 추가 X
+            access_cnt = True
+        else:
+            back.append(current_page) # 현재 페이지를 뒤로 가기 공간에 추가
+            current_page = int(order[1]) # 다음 접속 페이지가 현재 페이지로 갱신
+        front.clear() # 앞으로 가기 공간에 저장된 페이지 모두 삭제
     
-    elif command[0] == 'B':  # 뒤로 가기 명령
-        if back:  # 뒤로 갈 페이지가 있을 경우
-            front.append(current_page)  # 현재 페이지를 앞으로 가기 스택에 저장
-            current_page = back.pop()  # 뒤로가기 스택에서 가장 최근 페이지로 이동
+    elif "B" in order: # 뒤로가기의 경우
+        if back: # 뒤로가기 공간에 1개 이상의 페이지가 저장되어 있을 때
+            front.append(current_page) # 현재 보던 웹페이지를 앞으로 가기 공간에 저장
+            current_page = back.pop() # 뒤로 가기 공간에서 방문한지 가장 최근의 페이지에 접속. 해당 페이지는 뒤로 가기 공간에서 삭제
     
-    elif command[0] == 'F':  # 앞으로 가기 명령
-        if front:  # 앞으로 갈 페이지가 있을 경우
-            back.append(current_page)  # 현재 페이지를 뒤로 가기 스택에 저장
-            current_page = front.pop()  # 앞으로 가기 스택에서 가장 최근 페이지로 이동
+    elif "F" in order: # 앞으로가기의 경우
+        if front: # 앞으로 가기 공간에 1개 이상의 페이지가 저장되어 있을 때
+            back.append(current_page) # 현재 보던 웹페이지를 뒤로 가기 공간에 저장
+            current_page = front.pop() # 앞으로 가기 공간에서 방문한지 가장 최근의 페이지에 접속. 해당 페이지는 앞으로 가기 공간에서 삭제
     
-    elif command[0] == 'C':  # 중복 제거 명령
-        temp = deque()
-        prev = None
+    elif "C" in order: # 압축의 경우
+        temp = deque() # 중복 제거에 사용할 임시 deque
+        now = 0 # 페이지 중복 확인용
         while back:
-            page = back.pop()
-            if page != prev:
-                temp.appendleft(page)
-                prev = page
-        back = temp  # 중복 제거 후 back 갱신
+            page = back.popleft()
+            if now != page:
+                temp.append(page)
+                now = page
+        back = temp # 중복 제거한 back으로 갱신
 
-# 출력 처리
-print(current_page)  # 현재 페이지 출력
+# 현재 페이지 출력
+print(current_page)
 
-# 뒤로 가기 스택 출력 (역순으로)
+# 가장 최근에 방문한 순서대로 == 뒤에서부터 출력
 if back:
-    print(" ".join(map(str, reversed(back))))
+    print(" ".join(map(str, reversed(back)))) 
 else:
     print(-1)
 
-# 앞으로 가기 스택 출력 (역순으로)
 if front:
     print(" ".join(map(str, reversed(front))))
 else:
