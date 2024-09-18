@@ -7,6 +7,7 @@
 3 6
 5 12
 '''
+import sys; input = sys.stdin.readline
 
 N, K = map(int, input().split()) # 물건의 갯수 N, 넣을 수 있는 최대 무게 K
 dp = [[0] * (K+1) for _ in range(N+1)]
