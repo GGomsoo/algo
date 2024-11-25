@@ -33,7 +33,7 @@ for _ in range(K):
 
         n_row = (row + d_row[direction] * speed) % N
         n_col = (col + d_col[direction] * speed) % N
-        boards[n_row][n_col].append((mass, speed, direction))
+        boards[n_row][n_col].append([mass, speed, direction])
     
     # 격자 전체를 조사
     for row in range(N):
@@ -72,17 +72,13 @@ for _ in range(K):
                 # 4개의 파이어볼로 나눈다
                 if total_mass:
                     for direction_4 in n_direction_4:
-                        fireballs.append((row, col, total_mass, total_speed, direction_4))
+                        fireballs.append([row, col, total_mass, total_speed, direction_4])
             
             # 격자의 해당 위치에 파이어볼이 1개만 있는 경우
             if len(boards[row][col]) == 1:
                 mass, speed, direction = boards[row][col].pop(0)
-                fireballs.append((row, col, mass, speed, direction))
+                fireballs.append([row, col, mass, speed, direction])
 
 # 남아있는 파이어볼의 질량 구하기
-total_fireball_mass = 0
-for fireball in fireballs:
-    # 파이어볼의 정보 = [행, 열, 질량, 속도, 방향]
-    total_fireball_mass += fireball[2]
-
+total_fireball_mass = sum([fireball[2] for fireball in fireballs])
 print(total_fireball_mass)
