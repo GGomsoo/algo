@@ -2,8 +2,5 @@
 # 실버 V
 
 N = int(input())
-nums = list(map(int, input().split()))
-nums = list(set(nums))
-nums.sort()
+nums = sorted(set(map(int, input().split())))
 print(*nums)
-
